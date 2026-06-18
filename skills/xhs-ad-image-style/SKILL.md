@@ -9,12 +9,18 @@ description: Analyze high-performing Xiaohongshu/小红书 image-note visuals an
 
 Use this skill to convert high-liked Xiaohongshu image posts into a reusable visual recipe, then generate product-safe ad image prompts that borrow the style mechanics without copying any specific creator, brand, person, watermark, or protected composition too closely.
 
+## Core Rule
+
+Do not default to a generic Xiaohongshu lifestyle aesthetic. This skill must start from observed source visuals: crawled cover images, screenshots, exported image paths, or user-provided note images. If no source visuals are available, state that the visual route cannot be claimed as high-performing-source-derived and ask for images, or label the result as a product-only creative direction.
+
 ## Workflow
 
 1. Collect inputs: product name/category, target audience, selling points, required platform ratio, brand constraints, and the Xiaohongshu images or exported image paths.
-2. Inspect the strongest images first. If engagement data is available, prioritize by likes, saves, comments, or a weighted score. If engagement data is absent, sample the clearest and most visually representative images.
+2. Inspect the strongest images first. If engagement data is available, prioritize by likes, saves, comments, or a weighted score. If engagement data is absent, sample the clearest and most visually representative images. If no images are available, stop and request screenshots/images unless the user explicitly accepts a product-only direction.
 3. Analyze images using `references/style-analysis-matrix.md`. Cover camera angle, distance, framing, scene, props, lighting, color, texture, subject placement, text overlay, human presence, product role, and emotional hook.
 4. Cluster images into 3-6 style routes. Name each route by the visual promise, such as "desk-side unboxing proof", "clean ingredient flat lay", or "morning routine mirror shot".
+   - Make the routes meaningfully different. Vary camera angle, scene, prop system, color palette, human presence, and product role.
+   - Cite which source images or note ranks informed each route.
 5. Extract the visual formula for each route:
    - Shot type and camera position
    - Product placement and scale
@@ -35,8 +41,13 @@ Prefer this structure unless the user asks for something else:
 | 维度 | 观察 | 可复用做法 |
 | --- | --- | --- |
 
+## 视觉证据
+| 来源/排名 | 图片或截图 | 可见风格信号 |
+| --- | --- | --- |
+
 ## 风格路线
 ### 路线 1：名称
+- 来源依据：
 - 适合目标：
 - 拍摄角度：
 - 布景：
@@ -59,6 +70,7 @@ Negative prompt:
 ## Prompt Rules
 
 - Write prompts in the language most useful for the target generator. Use English for general image generation unless the user requests Chinese.
+- Every prompt must include a source-style anchor, such as "borrow the observed pattern of [route/source], but do not copy the exact layout."
 - Specify product category, package shape, visible label handling, composition, lens/angle, lighting, materials, background, props, color palette, mood, and aspect ratio.
 - Preserve the user's real brand constraints. If exact text, logo, or packaging must be accurate, recommend using an existing product image as a reference rather than relying on text generation alone.
 - Use Xiaohongshu-native visual language: casual but polished, useful-life scene, believable props, soft natural light, editorial crop, phone-camera plausibility, and clear product benefit.

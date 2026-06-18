@@ -14,6 +14,23 @@ Rank evidence from strongest to weakest:
 
 Never present lower-level evidence as if it were verified platform data.
 
+## Visual Evidence Gate
+
+Before generating Xiaohongshu ad image routes, confirm at least one of these inputs exists:
+
+- downloaded cover images from high-ranked notes
+- screenshots of high-ranked note covers or carousel images
+- exported image paths from the crawl
+- user-provided note images or URLs with visible images
+- product images plus an explicit user request to create a product-only direction
+
+If the first four are missing, do not claim the generated visuals are based on high-performing Xiaohongshu image styles. Ask for screenshots/images, or continue with a clearly labeled product-only creative direction.
+
+For each visual route, cite 2-5 source notes/images when available:
+
+| Route | Source notes/images | Shared visual pattern | What to borrow | What not to copy |
+|---|---|---|---|---|
+
 ## Note-To-Soft-Ad Mapping
 
 Translate image-text note signals into native soft-ad mechanics:
@@ -78,8 +95,8 @@ Use this table for 10-30 idea outputs:
 
 Use this table for 3-6 Xiaohongshu ad image style routes:
 
-| Route | Visual Promise | Source Evidence | Scene/Props | Product Role | Best For |
-|---|---|---|---|---|---|
+| Route | Visual Promise | Source Evidence | Scene/Props | Product Role | Differentiator | Best For |
+|---|---|---|---|---|---|---|
 
 ### Native Note
 
@@ -165,6 +182,7 @@ Before finalizing, verify:
 - At least one recommendation is tied to observed note evidence.
 - At least one recommendation uses `soft-ad-content` logic: pain first, product second, proof third.
 - At least one recommendation uses `xhs-ad-image-style` logic: visual route, product role, scene/props, and generation prompt.
+- Each visual route is visibly different in camera angle, scene, color, props, or layout; do not produce five images with the same warm tabletop look.
 - Drafts have native platform language and do not sound like hard-sell ad copy.
 - Titles and covers are concrete, not abstract.
 - CTAs match the likely user intent: comment, save, follow, click, DM, or purchase.

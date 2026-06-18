@@ -19,7 +19,7 @@ Use this when the user has opened or can open a Xiaohongshu search page in Chrom
    - visible note cards include titles, author/date, and like counts
 4. Run a bounded extraction loop:
    - collect all visible `a[href*="/search_result/"]` note links
-   - store `href`, `noteId`, and compact `cardText`
+   - store `href`, `noteId`, compact `cardText`, and visible cover image URLs when available
    - scroll down, wait briefly, repeat
    - stop after Top N is likely satisfied or results stop increasing
 5. Save raw JSON before parsing.
@@ -54,10 +54,13 @@ async function extractXhsCards() {
       }
       const cardText = txt(card);
       if (!cardText || cardText.includes("大家都在搜")) continue;
+      const img = card.querySelector("img");
       out.push({
         href,
         noteId: (href.match(/search_result\/([^?]+)/) || [])[1] || "",
-        cardText
+        cardText,
+        coverImageUrl: img ? (img.currentSrc || img.src || "") : "",
+        coverAlt: img ? (img.alt || "") : ""
       });
     }
     return out;
@@ -87,6 +90,7 @@ Use heuristics, not certainty:
 - The last token is usually the visible like count.
 - `赞` without a number means missing/hidden likes, not zero.
 - Author parsing can fail when a title or username contains spaces. Flag uncertain rows instead of inventing values.
+- Cover image extraction can fail when Xiaohongshu lazy-loads images as CSS backgrounds or protected blobs. If coverImageUrl is missing for top notes, capture screenshots or ask the user for note screenshots before generating image-style routes.
 
 ## Reporting Language
 

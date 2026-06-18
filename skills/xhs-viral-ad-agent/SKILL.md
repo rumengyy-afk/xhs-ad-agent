@@ -45,6 +45,7 @@ Collect or infer:
 
 2. Gather note evidence:
    - Use `xhs-viral-note-crawler` for Xiaohongshu collection, normalization, ranking, and note deconstruction.
+   - Capture visual evidence for the highest-priority notes whenever possible: cover image URL, screenshot, local image path, or at minimum a clear cover description.
    - Preserve the source method and limitations.
    - Do not invent ranked notes or metrics.
 
@@ -54,14 +55,15 @@ Collect or infer:
    - If product context is incomplete, make limited assumptions and label them before drafting.
 
 4. Generate image style routes:
-   - Use `xhs-ad-image-style` after note evidence or source images provide cover/image patterns, visual hooks, or product scenes.
+   - Use `xhs-ad-image-style` only after note evidence includes usable cover/image evidence: crawled image URLs, screenshots, exported image paths, or user-provided note images.
    - Prioritize high-engagement images when likes, saves, comments, or rank are available.
    - Convert visual mechanics into product-safe style routes, cover concepts, shot lists, and image-generation prompts.
    - If exact packaging, label text, or logo accuracy matters, recommend using a real product image as reference rather than relying on generated text.
+   - If no source visuals are available, do not generate generic Xiaohongshu-style images. Ask for note screenshots/images, or clearly switch to a product-only creative direction and label it as not source-style-derived.
 
 5. Compare patterns:
    - Map note patterns to native ad roles such as solution after pain, tool in a real scene, proof object, habit upgrade, comparison object, or comment-triggered recommendation.
-   - Map cover/image patterns to visual roles such as lifestyle proof, ingredient flat lay, routine scene, comparison shot, texture close-up, or clean product hero.
+   - Map observed cover/image patterns to visual roles such as lifestyle proof, ingredient flat lay, routine scene, comparison shot, texture close-up, or clean product hero.
    - Identify repeated audience pains, identities, promises, proof types, comment triggers, save triggers, and conversion paths.
    - Separate observed evidence from inference.
 
@@ -101,6 +103,8 @@ For end-to-end work, use this structure unless the user asks for another format:
 - 需要避免的硬广表达:
 
 **广告图视觉机会**
+- 视觉证据来源:
+- 参考笔记/图片:
 - 可复用的封面/首图规律:
 - 适合产品的视觉路线:
 - 场景/道具/色调:
@@ -141,5 +145,6 @@ For end-to-end work, use this structure unless the user asks for another format:
 - Do not make fake personal experience sound factual. Draft as a content script or clearly label assumptions when the user's own experience is not provided.
 - Do not make medical, financial, or guaranteed-result claims unless the user provides compliant proof and constraints.
 - Do not fabricate Xiaohongshu ranking data. If evidence is incomplete, state exactly what is missing and continue with a supported partial strategy.
+- Do not generate repeated generic visuals when source-style evidence is missing. Either collect top-note cover images/screenshots first, or explicitly label the visual plan as a product-only creative direction.
 - Distinguish observation from inference with phrases such as "从已采集笔记看", "从软广转化角度看", or "在缺少产品细节时，这是基于笔记规律的推断".
 - Keep outputs practical: every recommendation should be usable as a title, cover, hook, native note paragraph, product insertion line, seeded comment, image prompt, shot list, or testable publishing action.

@@ -76,6 +76,8 @@ def parse_card(card: Dict[str, Any]) -> Dict[str, Any]:
         "rank": "",
         "note_id": note_id,
         "url": href,
+        "cover_image_url": str(card.get("coverImageUrl") or card.get("cover_image_url") or "").strip(),
+        "cover_alt": str(card.get("coverAlt") or card.get("cover_alt") or "").strip(),
         "title": title,
         "author": author,
         "likes": likes,
@@ -103,7 +105,7 @@ def dedupe(rows: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 def write_csv(path: Path, rows: List[Dict[str, Any]]) -> None:
     fields = [
-        "rank", "note_id", "url", "title", "author", "likes", "likes_raw",
+        "rank", "note_id", "url", "cover_image_url", "cover_alt", "title", "author", "likes", "likes_raw",
         "likes_approx", "publish_date", "note_type", "card_text",
         "source_method", "parse_warning",
     ]
