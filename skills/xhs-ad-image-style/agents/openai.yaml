@@ -1,0 +1,4 @@
+interface:
+  display_name: "小红书广告图风格"
+  short_description: "从高赞小红书图片提炼拍摄风格并生成产品广告图提示词"
+  default_prompt: "Use $xhs-ad-image-style to analyze high-performing Xiaohongshu note images and create similar product ad image prompts."

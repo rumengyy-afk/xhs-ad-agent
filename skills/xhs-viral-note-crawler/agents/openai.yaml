@@ -1,0 +1,4 @@
+interface:
+  display_name: "小红书爆款笔记采集"
+  short_description: "采集排序并拆解小红书关键词图文爆款笔记数据完整流程"
+  default_prompt: "Use $xhs-viral-note-crawler to collect and analyze top-liked Xiaohongshu image-text notes for a keyword."

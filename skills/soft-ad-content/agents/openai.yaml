@@ -1,0 +1,4 @@
+interface:
+  display_name: "Soft Ad Content"
+  short_description: "Turn content breakdowns into natural product soft ads."
+  default_prompt: "Use $soft-ad-content to turn my viral content breakdown and product notes into natural soft-ad content."
