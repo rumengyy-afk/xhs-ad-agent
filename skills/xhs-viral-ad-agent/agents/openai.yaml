@@ -1,0 +1,7 @@
+interface:
+  display_name: "XHS Viral Ad Agent"
+  short_description: "采集爆款笔记，生成软广内容和小红书广告图风格提示词。"
+  default_prompt: "Use $xhs-viral-ad-agent to research a keyword, extract Xiaohongshu viral note patterns, and turn them into natural soft-ad notes, scripts, seeded comments, ad image style routes, image prompts, and publishing recommendations."
+
+policy:
+  allow_implicit_invocation: true
