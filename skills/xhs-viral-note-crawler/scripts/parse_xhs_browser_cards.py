@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
-"""Parse Xiaohongshu browser card captures into ranked note tables."""
+"""Parse Xiaohongshu browser card captures into ranked note tables.
+
+Expected browser JSON rows may include:
+  href, noteId, cardText, coverImageUrl, coverAlt
+"""
 
 from __future__ import annotations
 
 import argparse
 import csv
 import json
-import math
 import re
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
 
 
-DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2}|\d{2}-\d{2}|昨天\s*\d{1,2}:\d{2}|\d+天前|\d+小时前|昨天|前天)")
+DATE_RE = re.compile(
+    r"(\d{4}-\d{2}-\d{2}|\d{2}-\d{2}|昨天\s*\d{1,2}:\d{2}|\d+天前|\d+小时前|昨天|前天)"
+)
 LIKE_RE = re.compile(r"(?:^| )(\d+(?:\.\d+)?(?:万|千|w|k)?|赞)$", re.I)
 
 
@@ -23,7 +28,7 @@ def parse_count(value: Any) -> Tuple[int | None, bool]:
     if not text or text in {"-", "赞"}:
         return None, False
     approximate = any(token in text for token in ["+", "过", "约"])
-    match = re.search(r"(\d+(?:\.\d+)?)\s*([万w千k]?)", text, re.I)
+    match = re.search(r"(\d+(?:\.\d+)?)\s*([万千wk]?)", text, re.I)
     if not match:
         return None, approximate
     number = float(match.group(1))
@@ -41,10 +46,18 @@ def load_cards(path: Path) -> List[Dict[str, Any]]:
     return [dict(item) for item in data if isinstance(item, dict)]
 
 
+def first_present(card: Dict[str, Any], *keys: str) -> str:
+    for key in keys:
+        value = card.get(key)
+        if value:
+            return str(value).strip()
+    return ""
+
+
 def parse_card(card: Dict[str, Any]) -> Dict[str, Any]:
     text = re.sub(r"\s+", " ", str(card.get("cardText", "")).strip())
-    href = str(card.get("href") or card.get("url") or "").strip()
-    note_id = str(card.get("noteId") or card.get("note_id") or "").strip()
+    href = first_present(card, "href", "url")
+    note_id = first_present(card, "noteId", "note_id")
     if not note_id and href:
         match = re.search(r"/search_result/([^?/#]+)", href)
         note_id = match.group(1) if match else href.rstrip("/").split("/")[-1].split("?")[0]
@@ -76,8 +89,8 @@ def parse_card(card: Dict[str, Any]) -> Dict[str, Any]:
         "rank": "",
         "note_id": note_id,
         "url": href,
-        "cover_image_url": str(card.get("coverImageUrl") or card.get("cover_image_url") or "").strip(),
-        "cover_alt": str(card.get("coverAlt") or card.get("cover_alt") or "").strip(),
+        "cover_image_url": first_present(card, "coverImageUrl", "cover_image_url", "image", "img"),
+        "cover_alt": first_present(card, "coverAlt", "cover_alt", "alt"),
         "title": title,
         "author": author,
         "likes": likes,
@@ -105,9 +118,21 @@ def dedupe(rows: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 def write_csv(path: Path, rows: List[Dict[str, Any]]) -> None:
     fields = [
-        "rank", "note_id", "url", "cover_image_url", "cover_alt", "title", "author", "likes", "likes_raw",
-        "likes_approx", "publish_date", "note_type", "card_text",
-        "source_method", "parse_warning",
+        "rank",
+        "note_id",
+        "url",
+        "cover_image_url",
+        "cover_alt",
+        "title",
+        "author",
+        "likes",
+        "likes_raw",
+        "likes_approx",
+        "publish_date",
+        "note_type",
+        "card_text",
+        "source_method",
+        "parse_warning",
     ]
     with path.open("w", encoding="utf-8-sig", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
@@ -116,13 +141,19 @@ def write_csv(path: Path, rows: List[Dict[str, Any]]) -> None:
 
 
 def write_markdown(path: Path, rows: List[Dict[str, Any]]) -> None:
-    lines = ["| Rank | Likes | Title | Author | Date | URL |", "|---:|---:|---|---|---|---|"]
+    lines = [
+        "| Rank | Likes | Title | Author | Date | Cover | URL |",
+        "|---:|---:|---|---|---|---|---|",
+    ]
     for row in rows:
         title = str(row["title"]).replace("|", "\\|")
         author = str(row["author"]).replace("|", "\\|")
         link = f"[link]({row['url']})" if row["url"] else ""
+        cover = "yes" if row.get("cover_image_url") else ""
         likes = "" if row["likes"] is None else row["likes"]
-        lines.append(f"| {row['rank']} | {likes} | {title} | {author} | {row['publish_date']} | {link} |")
+        lines.append(
+            f"| {row['rank']} | {likes} | {title} | {author} | {row['publish_date']} | {cover} | {link} |"
+        )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -135,7 +166,10 @@ def main() -> None:
 
     raw_cards = load_cards(args.input)
     parsed = dedupe(parse_card(card) for card in raw_cards)
-    parsed.sort(key=lambda row: (row["likes"] is not None, row["likes"] if row["likes"] is not None else -1), reverse=True)
+    parsed.sort(
+        key=lambda row: (row["likes"] is not None, row["likes"] if row["likes"] is not None else -1),
+        reverse=True,
+    )
     for index, row in enumerate(parsed, start=1):
         row["rank"] = index
     top = parsed[: args.top]
@@ -149,6 +183,8 @@ def main() -> None:
         "clean_count": len(parsed),
         "numeric_like_count": sum(1 for row in parsed if row["likes"] is not None),
         "missing_like_count": sum(1 for row in parsed if row["likes"] is None),
+        "cover_image_count": sum(1 for row in parsed if row.get("cover_image_url")),
+        "top_cover_image_count": sum(1 for row in top if row.get("cover_image_url")),
         "top_count": len(top),
         "requested_top": args.top,
         "complete_top": len(top) >= args.top,

@@ -21,8 +21,9 @@ Respect platform terms, privacy, and robots guidance. Do not bypass captchas, pa
    - date window, market, language, and account exclusions if provided
 2. Collect evidence:
    - Prefer a logged-in Chrome tab already opened by the user on Xiaohongshu, sorted or filtered as requested.
-   - If Chrome control is available, read `references/chrome-capture-workflow.md` and use that workflow before asking the user for screenshots.
-   - Capture note URL/id, title, author, like count, collect count, comment count, publish date, cover image text, image count, body text, tags, and whether it is image-text or video.
+   - If the user mentions `@chrome`, asks for automatic execution, or Chrome control is available, read `references/chrome-capture-workflow.md` and use that workflow before asking the user for screenshots.
+   - Capture note URL/id, title, author, like count, collect count, comment count, publish date, cover image URL, cover alt/text, image count, body text, tags, and whether it is image-text or video.
+   - For image generation workflows, capture or download cover images for the highest-ranked notes. Minimum acceptable visual evidence is Top 5 with cover images or screenshots; preferred is Top 10-20.
    - Save raw browser captures or exports before cleaning. Use CSV or JSON whenever possible.
 3. Normalize and rank:
    - Run `scripts/normalize_xhs_notes.py` on CSV/JSON exports.
@@ -79,8 +80,17 @@ Outputs:
 - `xhs_notes_top.csv`
 - `xhs_notes_top.md`
 - `xhs_notes_summary.json`
+ - when cover URLs are available, downloaded cover files under a `covers/` directory
 
 For Chrome/browser captures, also keep the raw JSON used to create the final table.
+
+When the Chrome workflow is used, the minimum saved set is raw JSON, parsed clean CSV, parsed top CSV/MD, summary JSON, cover manifest, and downloaded cover images when cover URLs exist.
+
+Use the cover downloader after parsing browser-card output when `cover_image_url` exists:
+
+```bash
+python scripts/download_xhs_cover_images.py output/xhs_browser_cards_top.csv --top 20 --out-dir output/covers
+```
 
 ## Quality Checks
 
@@ -90,6 +100,8 @@ Before finalizing:
 - Confirm likes are numeric or explicitly marked approximate/missing.
 - Confirm the table is sorted descending by likes.
 - Confirm image-text filtering did not include obvious videos.
+- For any downstream image generation, confirm at least 5 top-ranked rows have `cover_image_url` or a local screenshot/cover image. If not, report that visual generation is blocked and ask for screenshots or logged-in browser access.
+- For any downstream image generation, inspect or provide local paths for representative downloaded covers before calling `xhs-ad-image-style`; do not pass only titles and like counts.
 - State how many raw candidates were collected, how many survived dedupe/filtering, and whether Top N was fully satisfied.
 - For Chrome captures, label the output as "current loaded search results" unless the platform itself exposes an official complete ranking.
 

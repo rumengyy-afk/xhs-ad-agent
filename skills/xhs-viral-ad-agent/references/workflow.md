@@ -24,12 +24,34 @@ Before generating Xiaohongshu ad image routes, confirm at least one of these inp
 - user-provided note images or URLs with visible images
 - product images plus an explicit user request to create a product-only direction
 
-If the first four are missing, do not claim the generated visuals are based on high-performing Xiaohongshu image styles. Ask for screenshots/images, or continue with a clearly labeled product-only creative direction.
+If the first four are missing, do not claim the generated visuals are based on high-performing Xiaohongshu image styles. For the normal agent workflow, stop and ask for screenshots/images or logged-in browser/export access. Continue with a product-only direction only when the user explicitly asks for product-only creative.
+
+For the default product-image generation workflow, require:
+
+- at least 5 high-ranked image-text notes with visible cover evidence
+- a ranked source table with note URL/id, title, likes, and cover path/URL
+- direct inspection of representative cover images before writing prompts or generating images
+
+When `@chrome` or automatic browser execution is requested, use `xhs-viral-note-crawler/references/chrome-capture-workflow.md` to collect browser-visible cards, save raw JSON, parse the ranked table, and download covers before this gate. The expected evidence folder should contain raw Chrome JSON, `xhs_browser_cards_top.csv`, `xhs_browser_cards_summary.json`, `covers/cover_manifest.csv`, and local cover images.
 
 For each visual route, cite 2-5 source notes/images when available:
 
 | Route | Source notes/images | Shared visual pattern | What to borrow | What not to copy |
 |---|---|---|---|---|
+
+## Default 3-Image Output
+
+When the user asks to generate usable images from a keyword, produce exactly 3 images unless they ask for a different count:
+
+| Image | Purpose | Source-note evidence required | What it should do |
+|---|---|---|---|
+| 1. Click cover | Stop scroll and earn the click | Top liked cover/title pattern | One sharp hook, mobile-readable text, strong first visual |
+| 2. Trust/proof | Make the product believable | Ingredient/comparison/process/texture/proof pattern | Show why the product belongs in the note without hard-selling |
+| 3. Use-scene | Make the product usable | Recipe/breakfast/snack/routine/lifestyle pattern | Show a realistic use moment the reader can copy |
+
+Do not output internal research cards, keyword-frequency charts, dashboard-like slides, or generic brand posters as the final 3 images. Those can be included in the analysis file, not in the publishable image set.
+
+If the image generator returns images inline without writing files to disk, state that limitation in the final response and preserve the source table and downloaded covers so the same prompts can be regenerated later.
 
 ## Note-To-Soft-Ad Mapping
 
@@ -182,6 +204,9 @@ Before finalizing, verify:
 - At least one recommendation is tied to observed note evidence.
 - At least one recommendation uses `soft-ad-content` logic: pain first, product second, proof third.
 - At least one recommendation uses `xhs-ad-image-style` logic: visual route, product role, scene/props, and generation prompt.
+- The image set contains exactly 3 publishable images by default: click cover, trust/proof, and use-scene.
+- Each generated image cites the source note rank/image pattern that informed it.
+- No final image is an internal strategy chart, keyword frequency chart, generic PPT card, or fake luxury poster unsupported by source covers.
 - Each visual route is visibly different in camera angle, scene, color, props, or layout; do not produce five images with the same warm tabletop look.
 - Drafts have native platform language and do not sound like hard-sell ad copy.
 - Titles and covers are concrete, not abstract.

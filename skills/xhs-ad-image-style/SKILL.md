@@ -13,12 +13,21 @@ Use this skill to convert high-liked Xiaohongshu image posts into a reusable vis
 
 Do not default to a generic Xiaohongshu lifestyle aesthetic. This skill must start from observed source visuals: crawled cover images, screenshots, exported image paths, or user-provided note images. If no source visuals are available, state that the visual route cannot be claimed as high-performing-source-derived and ask for images, or label the result as a product-only creative direction.
 
+When used inside `xhs-viral-ad-agent`, the default deliverable is **3 usable images**, not a large concept board:
+
+1. **Click cover**: a first image optimized for scroll-stop and search-result click, derived from the highest-like cover patterns.
+2. **Trust/proof image**: a second image that makes the product believable through ingredient, comparison, process, texture, package, or proof cues.
+3. **Use-scene image**: a third image that shows the product in a native lifestyle, recipe, breakfast, snack, desk, kitchen, or routine context.
+
+Every generated/promoted image must be traceable to source visual evidence. If the source data has titles and likes but no cover images/screenshots, do not generate images. Ask for top-note screenshots or browser/export data with cover images.
+
 ## Workflow
 
 1. Collect inputs: product name/category, target audience, selling points, required platform ratio, brand constraints, and the Xiaohongshu images or exported image paths.
 2. Inspect the strongest images first. If engagement data is available, prioritize by likes, saves, comments, or a weighted score. If engagement data is absent, sample the clearest and most visually representative images. If no images are available, stop and request screenshots/images unless the user explicitly accepts a product-only direction.
+   - When images come from `xhs-viral-note-crawler`, inspect representative downloaded cover files from `covers/` or screenshots before generating prompts. Do not treat URLs, titles, or like counts alone as visual evidence.
 3. Analyze images using `references/style-analysis-matrix.md`. Cover camera angle, distance, framing, scene, props, lighting, color, texture, subject placement, text overlay, human presence, product role, and emotional hook.
-4. Cluster images into 3-6 style routes. Name each route by the visual promise, such as "desk-side unboxing proof", "clean ingredient flat lay", or "morning routine mirror shot".
+4. Cluster images into 3 source-backed output routes by default: click cover, trust/proof, and use-scene. Name each route by the visual promise, such as "high-contrast nutrition correction cover", "clean ingredient proof flat lay", or "morning toast routine scene".
    - Make the routes meaningfully different. Vary camera angle, scene, prop system, color palette, human presence, and product role.
    - Cite which source images or note ranks informed each route.
 5. Extract the visual formula for each route:
@@ -30,7 +39,29 @@ Do not default to a generic Xiaohongshu lifestyle aesthetic. This skill must sta
    - Xiaohongshu-native content cues
    - What to avoid copying
 6. Convert formulas into generation prompts tailored to the user's product. Keep prompts concrete, visual, and production-ready.
-7. Provide selection guidance: which route is best for clicks, trust, premium feel, affordability, before/after proof, or lifestyle aspiration.
+7. If the user asks to generate images, generate or specify exactly 3 images, one per route. Do not produce repeated card layouts or generic black/gold templates unless the observed source visuals actually support that direction.
+8. Provide selection guidance: which route is best for clicks, trust, premium feel, affordability, before/after proof, or lifestyle aspiration.
+
+## Usable Image Quality Bar
+
+Before finalizing, reject or revise images that look like:
+
+- presentation slides, report cards, dashboards, or internal strategy summaries
+- generic luxury brand posters unrelated to the source Xiaohongshu covers
+- product photos pasted into a plain white rectangle without source-derived scene context
+- fake product packaging, inaccurate labels, invented logo text, or distorted jars
+- repeated designs where only the text changes
+- three images with the same composition, color palette, and text-card structure
+- claims or labels that read as medical promises, such as "降血糖", "降胆固醇", "保护心脏", "治疗", or guaranteed weight loss
+
+Prefer images with:
+
+- real product image reference for package accuracy
+- source-derived composition and mobile-readable text
+- visible differences across the three required routes: one click cover, one trust/proof image, and one use-scene image
+- food texture, use scene, hand/action, ingredient, package, or comparison proof
+- one clear message per image
+- Xiaohongshu-native crop and density, usually 3:4 or 4:5
 
 ## Output Format
 
@@ -90,7 +121,7 @@ Create whichever deliverables match the user's request:
 
 - A concise visual insight summary from high-performing images
 - A route table of reusable Xiaohongshu ad styles
-- Product-specific image-generation prompts
+- Product-specific image-generation prompts, defaulting to 3 prompts/images when used by `xhs-viral-ad-agent`
 - Negative prompts and production constraints
 - A shot list for a real photoshoot
 - A batch prompt set for multiple SKUs, audiences, seasons, or selling points

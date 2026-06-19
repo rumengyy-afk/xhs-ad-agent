@@ -7,6 +7,20 @@ description: Orchestrate Xiaohongshu viral note collection, natural soft-ad cont
 
 Use this skill as the orchestration layer for a complete Xiaohongshu viral-to-soft-ad-to-visual workflow. It does not replace the specialist skills; it coordinates them, extracts proven content and visual mechanics, and turns the combined evidence into native product content and Xiaohongshu-style ad image directions.
 
+## Primary Operating Rule
+
+For product image generation, this agent must not start from generic brand-card design. It must first extract the most popular image-text notes for the user's chosen keyword, capture their cover/carousel visual evidence, and then generate exactly 3 usable product images based on reusable visual mechanisms from those popular notes.
+
+Default image deliverable:
+
+1. **Click cover image**: based on the strongest high-like cover pattern.
+2. **Trust/proof image**: based on a high-performing ingredient, comparison, process, or proof pattern.
+3. **Use-scene image**: based on a high-performing lifestyle, recipe, breakfast, snack, or routine pattern.
+
+If top-note cover images or screenshots cannot be captured, do not generate images. Ask the user to provide screenshots or a logged-in Xiaohongshu browser/export. Product-only card layouts are not an acceptable fallback unless the user explicitly asks for product-only creative.
+
+When the user mentions `@chrome`, asks to run the agent automatically, or needs logged-in Xiaohongshu state, use the Chrome plugin path documented in `xhs-viral-note-crawler/references/chrome-capture-workflow.md` before asking for manual screenshots. Treat Chrome results as "current loaded search results" unless Xiaohongshu exposes an official complete ranking.
+
 ## Specialist Skills
 
 Use the local specialist skills when their trigger conditions are met:
@@ -18,9 +32,11 @@ Use the local specialist skills when their trigger conditions are met:
 When the full agent is relevant, use this sequence:
 
 1. Run note research first to understand searchable demand, audience language, title/cover patterns, pain points, comments, saves, and conversion signals.
-2. Run soft-ad content generation second to map the winning note mechanisms onto the user's product, scenario, proof, and decision moment.
-3. Run ad image style generation third to convert high-performing cover/image patterns into product-specific visual routes, cover concepts, and image-generation prompts.
-4. Synthesize the three outputs into a creator-ready content and visual production package.
+2. Extract the most popular image-text notes for the chosen keyword, ranked by visible likes or the user's selected ranking metric.
+3. Capture visual evidence for the top notes: cover image URLs, screenshots, downloaded cover files, or user-provided screenshots. Prefer at least Top 10 with usable covers; minimum Top 5.
+4. Run soft-ad content generation to map the winning note mechanisms onto the user's product, scenario, proof, and decision moment.
+5. Run ad image style generation to produce exactly 3 product image routes from the strongest observed visual mechanisms.
+6. Synthesize into a creator-ready package: the source-note evidence, copy, 3 image prompts or generated images, and a short usage note.
 
 ## Intake
 
@@ -45,7 +61,10 @@ Collect or infer:
 
 2. Gather note evidence:
    - Use `xhs-viral-note-crawler` for Xiaohongshu collection, normalization, ranking, and note deconstruction.
-   - Capture visual evidence for the highest-priority notes whenever possible: cover image URL, screenshot, local image path, or at minimum a clear cover description.
+   - If the user invokes `@chrome` or asks for automatic browser execution, read the Chrome control skill, connect to Chrome through the Node REPL runtime, open or claim the Xiaohongshu search tab, and save the raw card JSON before parsing.
+   - Capture visual evidence for the highest-priority notes: cover image URL, screenshot, downloaded local image path, or user-provided note screenshot.
+   - Required for image generation: at least 5 ranked image-text notes with visible cover evidence. If fewer than 5 covers are available, stop before image generation and request screenshots/export/login access.
+   - Save the raw capture, cleaned/ranked table, cover manifest, and downloaded/source cover files separately.
    - Preserve the source method and limitations.
    - Do not invent ranked notes or metrics.
 
@@ -55,11 +74,13 @@ Collect or infer:
    - If product context is incomplete, make limited assumptions and label them before drafting.
 
 4. Generate image style routes:
-   - Use `xhs-ad-image-style` only after note evidence includes usable cover/image evidence: crawled image URLs, screenshots, exported image paths, or user-provided note images.
+   - Use `xhs-ad-image-style` only after note evidence includes usable cover/image evidence: crawled image URLs, screenshots, exported image paths, downloaded cover files, or user-provided note images.
+   - Inspect representative downloaded covers before prompting image generation; do not rely on URLs, titles, or like counts alone.
    - Prioritize high-engagement images when likes, saves, comments, or rank are available.
-   - Convert visual mechanics into product-safe style routes, cover concepts, shot lists, and image-generation prompts.
+   - Convert visual mechanics into exactly 3 product-safe image routes: click cover, trust/proof, and use-scene.
+   - Each route must cite the source note ranks/images that informed it.
    - If exact packaging, label text, or logo accuracy matters, recommend using a real product image as reference rather than relying on generated text.
-   - If no source visuals are available, do not generate generic Xiaohongshu-style images. Ask for note screenshots/images, or clearly switch to a product-only creative direction and label it as not source-style-derived.
+   - If no source visuals are available, do not generate generic Xiaohongshu-style images. Ask for note screenshots/images.
 
 5. Compare patterns:
    - Map note patterns to native ad roles such as solution after pain, tool in a real scene, proof object, habit upgrade, comparison object, or comment-triggered recommendation.
@@ -68,7 +89,8 @@ Collect or infer:
    - Separate observed evidence from inference.
 
 6. Produce:
-   - Generate outputs the creator can directly use: soft-ad angles, title formulas, cover directions, native note drafts, short-video scripts, seeded comments, product insertion lines, image style routes, ad image prompts, CTAs, and publishing checklist.
+   - Generate outputs the creator can directly use: top-note evidence, soft-ad note copy, product insertion lines, CTAs, and 3 source-derived image prompts or generated images.
+   - If generated images are returned inline by the image tool and not written to disk, say that clearly and keep the source data/covers in the output folder for later regeneration.
    - Prefer fewer, sharper recommendations over generic advice.
 
 Read `references/workflow.md` when the request asks for a full strategy, a content calendar, multiple scripts, or a reusable operating process.
