@@ -53,6 +53,34 @@ Do not output internal research cards, keyword-frequency charts, dashboard-like 
 
 If the image generator returns images inline without writing files to disk, state that limitation in the final response and preserve the source table and downloaded covers so the same prompts can be regenerated later.
 
+## Diversity Review Gate
+
+Before final delivery, run `content-diversity-checker` whenever the package includes multiple titles, notes, image prompts, generated images, topics, or carousel cards.
+
+The diversity review must check:
+
+- repeated hook shapes, such as "not X, but Y", "N benefits", "one spoon", or "breakfast upgrade"
+- repeated scenes, especially breakfast-only or jar-on-table-only scenes
+- repeated visual systems, such as all warm ivory cards, same product placement, same text density, or same ingredient props
+- repeated product insertion timing and product role
+- repeated CTA and paragraph rhythm
+- repeated health/nutrition wording
+
+For the default 3-image set, the package fails if all three images share the same camera angle, color palette, product placement, or message structure. Revise before delivery so the three images clearly map to:
+
+1. click cover
+2. trust/proof
+3. use-scene
+
+Include a concise diversity verdict in the final package:
+
+```markdown
+**Diversity verdict**
+- Overall: Pass / Revised
+- Main repetition risk:
+- Revision made:
+```
+
 ## Note-To-Soft-Ad Mapping
 
 Translate image-text note signals into native soft-ad mechanics:
@@ -208,6 +236,7 @@ Before finalizing, verify:
 - Each generated image cites the source note rank/image pattern that informed it.
 - No final image is an internal strategy chart, keyword frequency chart, generic PPT card, or fake luxury poster unsupported by source covers.
 - Each visual route is visibly different in camera angle, scene, color, props, or layout; do not produce five images with the same warm tabletop look.
+- The package has passed `content-diversity-checker`, or has been revised after a samey/repetitive finding.
 - Drafts have native platform language and do not sound like hard-sell ad copy.
 - Titles and covers are concrete, not abstract.
 - CTAs match the likely user intent: comment, save, follow, click, DM, or purchase.

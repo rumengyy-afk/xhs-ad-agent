@@ -1,6 +1,6 @@
 ---
 name: xhs-viral-ad-agent
-description: Orchestrate Xiaohongshu viral note collection, natural soft-ad content generation, and Xiaohongshu ad image style prompting into an end-to-end Chinese product seeding agent. Use when Codex needs to research a keyword, collect and deconstruct viral image-text notes, extract audience pains and content mechanics, turn those insights into product-specific advertorials, Xiaohongshu notes, native social posts, short-video scripts, seeded comments, soft-sell angles, titles, cover directions, visual style routes, product ad image prompts, CTAs, and publishing recommendations.
+description: Orchestrate Xiaohongshu viral note collection, natural soft-ad content generation, Xiaohongshu ad image style prompting, and content diversity review into an end-to-end Chinese product seeding agent. Use when Codex needs to research a keyword, collect and deconstruct viral image-text notes, extract audience pains and content mechanics, turn those insights into product-specific advertorials, Xiaohongshu notes, native social posts, short-video scripts, seeded comments, soft-sell angles, titles, cover directions, visual style routes, product ad image prompts, CTAs, publishing recommendations, and repetition checks.
 ---
 
 # XHS Viral Ad Agent
@@ -28,6 +28,7 @@ Use the local specialist skills when their trigger conditions are met:
 - `xhs-viral-note-crawler`: collect, rank, normalize, and analyze Xiaohongshu viral image-text notes for a keyword or exported dataset.
 - `soft-ad-content`: turn content breakdowns, viral note patterns, hook analysis, and audience insight into product-specific soft ads, Xiaohongshu notes, short-video scripts, seeded comments, native ad angles, and brand-integrated social posts.
 - `xhs-ad-image-style`: analyze high-performing Xiaohongshu image-note visuals and turn reusable photography, set design, color, composition, and commercial cues into product ad image style routes and generation prompts.
+- `content-diversity-checker`: audit copy, titles, image routes, and generated sets for repeated hooks, same-looking layouts, repeated scenes, repeated product roles, and low creative diversity before final delivery.
 
 When the full agent is relevant, use this sequence:
 
@@ -36,7 +37,8 @@ When the full agent is relevant, use this sequence:
 3. Capture visual evidence for the top notes: cover image URLs, screenshots, downloaded cover files, or user-provided screenshots. Prefer at least Top 10 with usable covers; minimum Top 5.
 4. Run soft-ad content generation to map the winning note mechanisms onto the user's product, scenario, proof, and decision moment.
 5. Run ad image style generation to produce exactly 3 product image routes from the strongest observed visual mechanisms.
-6. Synthesize into a creator-ready package: the source-note evidence, copy, 3 image prompts or generated images, and a short usage note.
+6. Run content diversity review to catch repeated hooks, breakfast-only scenarios, same color/layout systems, same product insertion, or repeated CTAs.
+7. Synthesize into a creator-ready package: the source-note evidence, copy, 3 image prompts or generated images, diversity verdict, and a short usage note.
 
 ## Intake
 
@@ -88,8 +90,14 @@ Collect or infer:
    - Identify repeated audience pains, identities, promises, proof types, comment triggers, save triggers, and conversion paths.
    - Separate observed evidence from inference.
 
-6. Produce:
+6. Check diversity:
+   - Use `content-diversity-checker` before final delivery when producing more than one title, note, image prompt, generated image, or topic route.
+   - Fail and revise drafts that reuse the same hook shape, product role, breakfast-only scene, color palette, product-on-table composition, "one spoon" message, or identical CTA across the set.
+   - For 3-image sets, require clear differences across click cover, trust/proof, and use-scene. At least two of these must vary across all three: scene, camera angle, color system, text density, product role, and proof type.
+
+7. Produce:
    - Generate outputs the creator can directly use: top-note evidence, soft-ad note copy, product insertion lines, CTAs, and 3 source-derived image prompts or generated images.
+   - Include a concise diversity verdict: pass/revise, main repetition risk, and what was changed to improve diversity.
    - If generated images are returned inline by the image tool and not written to disk, say that clearly and keep the source data/covers in the output folder for later regeneration.
    - Prefer fewer, sharper recommendations over generic advice.
 

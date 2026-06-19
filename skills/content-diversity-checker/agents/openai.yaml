@@ -1,0 +1,4 @@
+interface:
+  display_name: "Content Diversity Checker"
+  short_description: "Checks content for repetition"
+  default_prompt: "Use $content-diversity-checker to check this Xiaohongshu content package for repetition and revision needs."
